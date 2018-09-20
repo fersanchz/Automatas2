@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<libraryInfos>
+<libraryInfo home="C:\eclipse Windows\jre" version="1.8.0_73">
+<bootpath>
+<entry path="C:\eclipse Windows\jre\lib\resources.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\rt.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\sunrsasign.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\jsse.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\jce.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\charsets.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\jfr.jar"/>
+<entry path="C:\eclipse Windows\jre\classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="C:\eclipse Windows\jre\lib\ext"/>
+<entry path="C:\Windows\Sun\Java\lib\ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="C:\eclipse Windows\jre\lib\endorsed"/>
+</endorsedDirs>
+</libraryInfo>
+<libraryInfo home="C:\eclipse Windows" version="1.8.0_73">
+<bootpath>
+<entry path="C:\eclipse Windows\jre\lib\resources.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\rt.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\sunrsasign.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\jsse.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\jce.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\charsets.jar"/>
+<entry path="C:\eclipse Windows\jre\lib\jfr.jar"/>
+<entry path="C:\eclipse Windows\jre\classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="C:\eclipse Windows\jre\lib\ext"/>
+<entry path="C:\Windows\Sun\Java\lib\ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="C:\eclipse Windows\jre\lib\endorsed"/>
+</endorsedDirs>
+</libraryInfo>
+</libraryInfos>

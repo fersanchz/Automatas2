@@ -1,0 +1,2 @@
+INDEX VERSION 1.127+C:\git\github\automatas2\.metadata\.plugins\org.eclipse.jdt.core
+2447867829.index

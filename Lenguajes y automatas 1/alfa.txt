@@ -1,0 +1,13 @@
+Palabras reservadas:
+class,if,boolean, int, public, private,true,false
+
+Operadores:
+{,},;,=,(,)
+
+>,<,>=,<=,==,!=
+
++,-
+
+Alfabeto:
+a..z,_
+1..9<0..9>
