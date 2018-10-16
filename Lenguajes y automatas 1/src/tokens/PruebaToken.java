@@ -1,4 +1,5 @@
 package tokens;
+import java.util.HashMap;
 import java.util.Vector;
 import java.io.*;
 public class PruebaToken {
@@ -7,10 +8,16 @@ public class PruebaToken {
 	public static String nAgrupa[][]={{"(","ABRE PARENTESIS"},{")","CIERRA PARENTESIS"},{"{","ABRE LLAVES"},{"}","CIERRA LLAVES"}};
 	public static String alfabetoNumeros="0123456789";
 	public static String alfabetoLetras="abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ_";
+	public static String operadoresaritmeticos[]={"+","-"};
+	public static String operadoreslogicos[]={"<",">",">=","<=","==","!="};
 	
 	public static int nToken=0;
 	public static Vector<String>token=new Vector<String>();
 	public static Vector<String>nomToken=new Vector<String>();
+	public static Vector<String>tokenRenglon=new Vector<String>();
+	public static Vector<String>nomTokenRenglon=new Vector<String>();
+	public static Vector<String>listaErroresSemanticos=new Vector<String>();
+    private static HashMap<String,TablaSimbolo> tablaSimbolos = new HashMap<String,TablaSimbolo>();
 	public static int identificador(String cadena,int pos){
 		int nPos=0;
 		boolean d=letra(cadena.substring(pos, pos+1));
@@ -489,8 +496,6 @@ public class PruebaToken {
 		return texto;
 	}
 	public static void main(String[] args) {
-		//String palabras="INICIO\n\tint A;\n\tA=5;\n\twhile(A==5)\n\t{\n\t\tint B; B=6; A=(B+A);\n\t\tprintln A;\n\t};\n\tboolean C;\n\tprintln C;\nFIN\n\n";
-		//String palabras="\npublic class Pru_eba{ \n\tint a=0; \n\tboolean si=true; \n\tb=a+1; \n\tif(b>=5) \n\t\twhile(si!=true)\n}\n";
 		String palabras=dameTexto();
 		System.out.println(palabras);
 		lXl(palabras);
@@ -499,6 +504,145 @@ public class PruebaToken {
 			
 		}
 		classDeclaracion();
+		dameTextoRenglon();
+		imprimeErroresSemanticos();
 	}
+	public static String dameTextoRenglon(){
+		String linea="",texto="";
+		int nRenglon=0;
+		try{
+			FileReader archivo=new FileReader("src/tokens/codigo fuente.txt"); // lee el archivo
+			BufferedReader leeLinea=new BufferedReader(archivo); // filtra los daros de FileReader
+			linea=leeLinea.readLine(); // otorga la primer linea del archivo
+			while(linea!=null){ // si en la variable linea se guardo datos(no esta vacia) hara el ciclo
+				nRenglon++;
+				lXlRenglon(linea,nRenglon);
+				linea=leeLinea.readLine(); // lee la siguiente linea
+			}
+			imprimeTablaSimbolos();
+		}catch(FileNotFoundException exception){ // cacha el error de archivo no encontrado
+			System.out.println(exception);
+		}catch(Exception exception){ // cacha los otros errores
+			System.out.println(exception);
+		}
+		return texto;
+	}
+	public static void lXlRenglon(String palabras, int nRenglon){
+		tokenRenglon.clear();
+		nomTokenRenglon.clear();
+		for(int i=0;i<palabras.length();i++){
+			int n=signoPuntuacion(palabras,i);
+			if(identificador(palabras,i)>0){
+				int fin=identificador(palabras,i)+i;
+				String pal=palabras.substring(i, fin);
+				i=fin-1;
+				if(palReservada(pal)){
+					tokenRenglon.addElement(pal);
+					nomTokenRenglon.addElement("PALABRA RESERVADA");
+				}else{
+					tokenRenglon.addElement(pal);
+					nomTokenRenglon.addElement("ID");
+				}
+			}else if(numero(palabras,i)>0){
+				int fin=numero(palabras,i)+i;
+				String pal=palabras.substring(i, fin);
+				tokenRenglon.addElement(pal);
+				nomTokenRenglon.addElement("ENTERO");
+				i=fin-1;
+			}else if(operadores(palabras,i)>0){
+				int fin=operadores(palabras,i)+i;
+				String pal=palabras.substring(i, fin);
+				String nOp=nomOperador(palabras.substring(i, fin));
+				tokenRenglon.addElement(pal);
+				nomTokenRenglon.addElement(nOp);
+				i+=operadores(palabras,i)-1;
+			}else if(agrupa(palabras,i)>0){
+				int fin=agrupa(palabras,i)+i;
+				String pal=palabras.substring(i, fin);
+				String nAg=nomAgrupa(palabras.substring(i, fin));
+				tokenRenglon.addElement(pal);
+				nomTokenRenglon.addElement(nAg);
+				i+=agrupa(palabras,i)-1;
+			}else if(palabras.charAt(i)!=' '&&palabras.charAt(i)!='\n'&&palabras.charAt(i)!='\t'){
+				String car=palabras.substring(i, i+1);
+				tokenRenglon.addElement(car);
+				nomTokenRenglon.addElement("ERROR");
+				
+			}
+		}
+		validaVariablesEstenDeclaradas(nRenglon);
+		llenaTablaSimbolos(nRenglon);
+	}
+	public static void validaVariablesEstenDeclaradas(int nRenglon){
+		if(tokenRenglon.size()==0)
+			return;
+		String token=tokenRenglon.elementAt(0);
+		if(type(token)){
+			return;
+		}
+		if(token.equals("class")){
+			return;
+		}
+		String palabra="",descripcion="";
+		for(int i=0;i<nomTokenRenglon.size();i++){
+			descripcion=nomTokenRenglon.elementAt(i);
+			if(descripcion.equals("ID")){
+				palabra=tokenRenglon.elementAt(i);
+				if(!encontrarSimbolo(palabra)){
+					listaErroresSemanticos.add("Error: La variable "+palabra+" no se encuentra declarada, en el renglon "+nRenglon);
+				}
+			}
+		}
+	}
+	public static void llenaTablaSimbolos(int renglon){
+		TablaSimbolo simboloAtributos;
+		if(tokenRenglon.size()==0)
+			return;
+		String token=tokenRenglon.elementAt(0);
+		if(!type(token)){
+			return;
+		}
+		String tipo="",simbolo="",valor="";
+		if(tokenRenglon.size()>1)
+			tipo=tokenRenglon.elementAt(0);
+		if(tokenRenglon.size()>2)
+			simbolo=tokenRenglon.elementAt(1);
+		if(tokenRenglon.size()>4)
+			valor=tokenRenglon.elementAt(3);
+		if(!encontrarSimbolo(simbolo)){
+			tablaSimbolos.put(simbolo, new TablaSimbolo(simbolo, "Operando", tipo, renglon,valor));
+		}else{
+			simboloAtributos =  tablaSimbolos.get(simbolo);
+			listaErroresSemanticos.add("Error: La variable "+simbolo+" de tipo "+tipo+" en el renglon "+renglon+", ya se encuentra declarada en el renglon "+simboloAtributos.getPosicion());
+		}
+	}
+	public static void imprimeTablaSimbolos(){
+		System.out.println("\nTABLA DE SIMBOLOS");
+		System.out.println("-------------------------------------------------------");
+		System.out.println("SIMBOLO\tVALOR\tPOSICION\tROL\t\tTIPO");
+		for(TablaSimbolo simboloAtributos:tablaSimbolos.values()){
+			System.out.println(simboloAtributos.getSimbolo()+"\t"+simboloAtributos.getValor()+"\t"+simboloAtributos.getPosicion()+"\t\t"+simboloAtributos.getRol()+"\t"+simboloAtributos.getTipo());
+		}
+	}
+	public static void imprimeErroresSemanticos(){
+		System.out.println("\nERRORES SEMANTICOS");
+		System.out.println("-------------------------------------------------------");
+		for(String error:listaErroresSemanticos){
+			System.out.println(error);
+		}
+	}
+	public static boolean encontrarSimbolo(String simbolo){
+        boolean bRegresa = false;
+         if (tablaSimbolos.containsKey(simbolo))
+        {
+            bRegresa = true;
+        }
+        return bRegresa;
+    }
+    
+    public static TablaSimbolo obtenerDatosSimbolo(String simbolo){
+         TablaSimbolo atributosSimbolos = new TablaSimbolo();
+         return atributosSimbolos;
+    }
 
 }
