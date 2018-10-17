@@ -391,12 +391,12 @@ public class PruebaToken {
 		nToken++;
 		if(nToken<token.size())
 			palabra=token.elementAt(nToken);
-		while(esOperadorLogico(palabra)||esOperadorAritmetico(palabra)){
+		while(palabra.equals("+")||palabra.equals("-")){
 			nToken++;
 			if(nToken<nomToken.size())
 				tipoToken=nomToken.elementAt(nToken);
-			if(!(tipoToken.equals("ENTERO")||!tipoToken.equals("ID")||!palabra.equals("true")||!palabra.equals("false"))){
-				System.out.println("Error token #"+nToken+": se esperaba un identificador o un valor");
+			if(!(tipoToken.equals("ENTERO")||tipoToken.equals("ID"))){
+				System.out.println("Error token #"+nToken+": se esperaba un identificador o un entero");
 				return false;
 			}
 			nToken++;
