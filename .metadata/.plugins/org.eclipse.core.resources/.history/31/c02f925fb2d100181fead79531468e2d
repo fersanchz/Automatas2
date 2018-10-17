@@ -1,0 +1,7 @@
+ public class Pru_eba{ 
+	a=5+b+1;
+	int a=0;
+	boolean si=true;
+	int a=2;
+	boolean si=flase; 
+}

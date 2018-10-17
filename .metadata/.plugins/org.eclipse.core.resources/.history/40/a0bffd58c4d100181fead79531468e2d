@@ -1,0 +1,3 @@
+class Pru_eba{ 
+	int a=0;
+}

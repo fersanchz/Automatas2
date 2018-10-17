@@ -1,0 +1,6 @@
+class Pru_eba{ 
+	boolean si=true;
+	int a=2;
+	boolean si=flase; 
+	a=5+b+1;
+}

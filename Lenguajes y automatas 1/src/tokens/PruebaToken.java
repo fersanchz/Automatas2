@@ -289,6 +289,7 @@ public class PruebaToken {
 			correcto=false;
 		}
 		nToken++;
+		field_declaration();
 		return correcto;
 	}
 	public static boolean variable_declarator(){
@@ -352,6 +353,67 @@ public class PruebaToken {
 				System.out.println("Error: Se esperaba una declaracion de while");	
 			}
 		}
+		String tipoToken="";
+		if(nToken<nomToken.size())
+			tipoToken=nomToken.elementAt(nToken);
+		if(tipoToken.equals("ID")){
+			if(aritmetica_expression()){
+				correcto=true;
+			}else{
+				System.out.println("Error: Se esperaba una declaracion aritmetica logica");	
+			}
+		}
+		return correcto;
+	}
+	public static boolean aritmetica_expression(){
+		boolean correcto=true;
+		String palabra="";
+		String tipoToken="";
+		if(nToken<nomToken.size())
+			tipoToken=nomToken.elementAt(nToken);
+		if(!tipoToken.equals("ID")){
+			return false;
+		}
+		nToken++;
+		if(nToken<token.size())
+			palabra=token.elementAt(nToken);
+		if(!palabra.equals("=")){
+			System.out.println("Error token #"+nToken+": se esperaba un signo igual");
+			return false;
+		}
+		nToken++;
+		if(nToken<nomToken.size())
+			tipoToken=nomToken.elementAt(nToken);
+		if(!(tipoToken.equals("ENTERO")||tipoToken.equals("ID"))){
+			System.out.println("Error token #"+nToken+": se esperaba un identificador o un entero");
+			return false;
+		}
+		nToken++;
+		if(nToken<token.size())
+			palabra=token.elementAt(nToken);
+		while(palabra.equals("+")||palabra.equals("-")){
+			nToken++;
+			if(nToken<nomToken.size())
+				tipoToken=nomToken.elementAt(nToken);
+			if(!(tipoToken.equals("ENTERO")||tipoToken.equals("ID"))){
+				System.out.println("Error token #"+nToken+": se esperaba un identificador o un entero");
+				return false;
+			}
+			nToken++;
+			if(nToken<token.size())
+				palabra=token.elementAt(nToken);
+			else
+				palabra="";
+		}
+
+		if(nToken<token.size())
+			palabra=token.elementAt(nToken);
+		if(!palabra.equals(";")){
+			System.out.println("Error token #"+nToken+": se esperaba punto y coma.");
+			return false;
+		}
+		nToken++;
+		statement();
 		return correcto;
 	}
 	public static boolean while_statement(){
@@ -572,6 +634,67 @@ public class PruebaToken {
 		}
 		validaVariablesEstenDeclaradas(nRenglon);
 		llenaTablaSimbolos(nRenglon);
+		validarVariables(nRenglon);
+	}
+	public static void validarVariables(int nRenglon){
+		if(tokenRenglon.size()<4)
+			return;
+		String sTipo=tokenRenglon.elementAt(0);
+		if(!type(sTipo)){
+			return;
+		}
+		
+		String palabra="",descripcion="";
+		for(int i=3;i<nomTokenRenglon.size();i++){
+			descripcion=nomTokenRenglon.elementAt(i);
+			palabra=tokenRenglon.elementAt(i);
+			if(descripcion.equals("ID")){
+				if(encontrarSimbolo(palabra)){
+					if(!regresaTipoDato(palabra).equals(sTipo)){
+						String variable=tokenRenglon.elementAt(1);
+						listaErroresSemanticos.add("Error: La variable "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
+					}
+				}
+			}else if(descripcion.equals("ENTERO")){
+				if(!sTipo.equals("int")){
+					String variable=tokenRenglon.elementAt(1);
+					listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
+				}
+			}else if(palabra.equals("true")||palabra.equals("false")){
+				if(!sTipo.equals("boolean")){
+					String variable=tokenRenglon.elementAt(1);
+					listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
+				}
+			}else if(!esOperadorAritmetico(palabra)&&!esOperadorLogico(palabra)&&!palabra.equals(";")){
+				String variable=tokenRenglon.elementAt(1);
+				listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
+			}
+		}
+	}
+	public static boolean esOperadorAritmetico(String op){
+		boolean si=false;
+		for(String p:operadoresaritmeticos){
+			if(p.equals(op)){
+				si=true;
+			}
+		}
+		return si;
+	}
+	public static boolean esOperadorLogico(String op){
+		boolean si=false;
+		for(String p:operadoreslogicos){
+			if(p.equals(op)){
+				si=true;
+			}
+		}
+		return si;
+	}
+	public static String regresaTipoDato(String palabra){
+		String tipo="";
+        TablaSimbolo simboloAtributos; 
+        simboloAtributos =  tablaSimbolos.get(palabra);
+		tipo=simboloAtributos.getTipo();
+		return tipo;
 	}
 	public static void validaVariablesEstenDeclaradas(int nRenglon){
 		if(tokenRenglon.size()==0)
@@ -625,6 +748,8 @@ public class PruebaToken {
 		}
 	}
 	public static void imprimeErroresSemanticos(){
+		if(listaErroresSemanticos.size()==0)
+			return;
 		System.out.println("\nERRORES SEMANTICOS");
 		System.out.println("-------------------------------------------------------");
 		for(String error:listaErroresSemanticos){
