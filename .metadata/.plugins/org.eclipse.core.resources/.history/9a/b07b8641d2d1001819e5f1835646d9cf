@@ -635,7 +635,6 @@ public class PruebaToken {
 		validaVariablesEstenDeclaradas(nRenglon);
 		llenaTablaSimbolos(nRenglon);
 		validarVariables(nRenglon);
-		validarOperacion(nRenglon);
 	}
 	public static void validarVariables(int nRenglon){
 		if(tokenRenglon.size()<4)
@@ -668,51 +667,6 @@ public class PruebaToken {
 				}
 			}else if(!esOperadorAritmetico(palabra)&&!esOperadorLogico(palabra)&&!palabra.equals(";")){
 				String variable=tokenRenglon.elementAt(1);
-				listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-			}
-		}
-	}
-	public static void validarOperacion(int nRenglon){
-		if(tokenRenglon.size()<3)
-			return;
-		String sTipo="";
-		String palabra=tokenRenglon.elementAt(0),descripcion=nomTokenRenglon.elementAt(0);
-		if(!descripcion.equals("ID")){
-			return;
-		}
-		sTipo=regresaTipoDato(palabra);
-		for(int i=2;i<nomTokenRenglon.size();i++){
-			descripcion=nomTokenRenglon.elementAt(i);
-			palabra=tokenRenglon.elementAt(i);
-			if(descripcion.equals("ID")){
-				if(encontrarSimbolo(palabra)){
-					if(!regresaTipoDato(palabra).equals(sTipo)){
-						String variable=tokenRenglon.elementAt(0);
-						listaErroresSemanticos.add("Error: La variable "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-					}
-				}
-			}else if(descripcion.equals("ENTERO")){
-				if(!sTipo.equals("int")){
-					String variable=tokenRenglon.elementAt(0);
-					listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-				}
-			}else if(palabra.equals("true")||palabra.equals("false")){
-				if(!sTipo.equals("boolean")){
-					String variable=tokenRenglon.elementAt(0);
-					listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-				}
-			}else if(esOperadorAritmetico(palabra)){
-				if(!sTipo.equals("int")){
-					String variable=tokenRenglon.elementAt(0);
-					listaErroresSemanticos.add("Error: el operador "+palabra+" no corresponde al tipo de "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-				}
-			}else if(esOperadorLogico(palabra)){
-				if(!sTipo.equals("boolean")){
-					String variable=tokenRenglon.elementAt(0);
-					listaErroresSemanticos.add("Error: el operador "+palabra+" no corresponde al tipo de "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-				}
-			}else if(!palabra.equals(";")){
-				String variable=tokenRenglon.elementAt(0);
 				listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
 			}
 		}

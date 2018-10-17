@@ -3,5 +3,5 @@ class Pru_eba{
 	int b=2;
 	boolean si=false; 
 	boolean no=true;
-	b=15-4+8;
+	a=5+b+1;
 }

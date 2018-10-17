@@ -701,17 +701,7 @@ public class PruebaToken {
 					String variable=tokenRenglon.elementAt(0);
 					listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
 				}
-			}else if(esOperadorAritmetico(palabra)){
-				if(!sTipo.equals("int")){
-					String variable=tokenRenglon.elementAt(0);
-					listaErroresSemanticos.add("Error: el operador "+palabra+" no corresponde al tipo de "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-				}
-			}else if(esOperadorLogico(palabra)){
-				if(!sTipo.equals("boolean")){
-					String variable=tokenRenglon.elementAt(0);
-					listaErroresSemanticos.add("Error: el operador "+palabra+" no corresponde al tipo de "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
-				}
-			}else if(!palabra.equals(";")){
+			}else if(!esOperadorAritmetico(palabra)&&!esOperadorLogico(palabra)&&!palabra.equals(";")){
 				String variable=tokenRenglon.elementAt(0);
 				listaErroresSemanticos.add("Error: el valor "+palabra+" no es del mismo tipo que "+variable+" de tipo de dato "+sTipo+", en el renglon "+nRenglon);
 			}
