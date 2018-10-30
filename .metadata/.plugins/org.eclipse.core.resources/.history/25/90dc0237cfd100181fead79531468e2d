@@ -1,7 +1,0 @@
-class Pru_eba{ 
-	int a=true;
-	int b=2;
-	boolean si=false; 
-	boolean no=true;
-	a=5+b+1;
-}
