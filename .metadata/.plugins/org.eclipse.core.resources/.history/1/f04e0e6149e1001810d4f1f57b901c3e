@@ -1,0 +1,92 @@
+package Expresion;
+import java.util.StringTokenizer;
+import java.util.Vector;
+public class Arbol {
+	public static boolean InsertaABB(String clave,  Nodo nodo)
+	{
+		if (clave<nodo.clave)
+		{
+			if (nodo.LI==null)
+			{
+				Nodo nuevo=new Nodo(clave);
+				nodo.LI=nuevo;
+				return true;
+			}
+			else
+			{
+				InsertaABB(clave,  nodo.LI);
+			}
+		}
+		else
+		{
+			if (clave>nodo.clave)
+			{
+				if (nodo.LD==null)
+				{
+					Nodo nuevo=new Nodo(clave);
+					nodo.LD=nuevo;
+					return true;		
+				}
+				else
+				{
+					InsertaABB(clave, nodo.LD);
+				}
+			}
+		}
+		return false;
+	}
+	public static void inorden(Nodo nodo)
+	{ 
+		if (nodo!=null)
+		{
+			inorden(nodo.LI);
+			System.out.print(" "+nodo.clave);
+			inorden(nodo.LD);
+		}
+	}
+	public static void preorden(Nodo nodo)
+	{
+		if (nodo!=null)
+		{
+			System.out.print(" "+nodo.clave);
+			preorden(nodo.LI);
+			preorden(nodo.LD);
+		}
+	}
+	public static void postorden(Nodo nodo)
+	{
+		if (nodo!=null)
+		{
+			postorden(nodo.LI);
+			postorden(nodo.LD);
+			System.out.print(" "+nodo.clave);
+		}
+	}
+	public static Nodo llenaArbol(Vector<String> datos){
+		Nodo raiz=null;
+		for(int i=0;i<datos.size();i++){
+			if(raiz==null)
+				raiz=new Nodo(datos.elementAt(i));
+			else{
+				InsertaABB(datos.elementAt(i),raiz);				
+			}
+		}
+		return raiz;
+	}
+	public static void main(String[] args) {
+		String sExpresion="A + B * C";
+		StringTokenizer tokens=new StringTokenizer(sExpresion);
+		Vector<String> datos = new Vector<String>();
+		while(tokens.hasMoreTokens()){
+			datos.add(tokens.nextToken());
+	    }
+		Nodo arbol=llenaArbol(datos);
+		System.out.print("\nInorden:\t");
+		inorden(arbol);
+		System.out.print("\nPreorden:\t");
+		preorden(arbol);
+		System.out.print("\nPostorden:\t");
+		postorden(arbol);
+	}
+
+}
